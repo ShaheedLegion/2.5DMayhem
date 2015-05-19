@@ -22,7 +22,7 @@ namespace d2 {
 
 class Renderable : public sf::Drawable {
 public:
-  virtual ~Renderable();
+  virtual ~Renderable() {}
 
   // Tick the component with the supplied adjustment to make a smooth 60fps.
   virtual void tick(float adjustment) = 0;
@@ -30,7 +30,7 @@ public:
 
 class Inputable {
 public:
-  virtual ~Inputable();
+  virtual ~Inputable() {}
 
   // Handle input on the component.
   virtual void handleInput(sf::Event &event) = 0;

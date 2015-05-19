@@ -17,10 +17,7 @@
 
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Window/Event.hpp>
-#include "resources/TextureLoader.hpp"
-#include "resources/SpriteManager.hpp"
-#include <SFML/Graphics/Sprite.hpp>
-#include <SFML/Graphics/RenderStates.hpp>
+#include "game/Universe.hpp"
 
 int main() {
   // Seed the random number generator.
@@ -32,14 +29,10 @@ int main() {
   window.setVerticalSyncEnabled(true);
   window.setKeyRepeatEnabled(false);
 
-  d2::TextureLoader loader;
-  d2::SpriteManager spriteManager;
-  std::pair<bool, int> texId(loader.Load("res/forest_bg.png"));
-  sf::Texture &texture = loader.Get(texId.second);
-  sf::Sprite &sprite(spriteManager.Get(texId.second, texture));
+  d2::Universe universe;
 
-  // using Clock = std::chrono::high_resolution_clock;
-  // auto lastTick = Clock::now();
+  using Clock = std::chrono::high_resolution_clock;
+  auto lastTick = Clock::now();
 
   while (window.isOpen()) {
     sf::Event evt;
@@ -51,23 +44,22 @@ int main() {
       }
 
       // Let the universe also handle events.
-      // gameState->handleInput(evt);
+      universe.handleInput(evt);
     }
 
     // We expect that 16.666ms went by since the last tick.  (60fps)
-    // auto now = Clock::now();
-    // std::chrono::duration<float, std::chrono::milliseconds::period>
-    // timePassed =
-    //    std::chrono::duration_cast<std::chrono::microseconds>(now - lastTick);
-    // lastTick = now;
+    auto now = Clock::now();
+    std::chrono::duration<float, std::chrono::milliseconds::period> timePassed =
+        std::chrono::duration_cast<std::chrono::microseconds>(now - lastTick);
+    lastTick = now;
 
     // We calculate the adjust we must make to get a smooth 60fps tick.
-    // float adjustment = timePassed.count() * 60.f / 1000.f;
-    // gameState->tick(adjustment);
+    float adjustment = timePassed.count() * 60.f / 1000.f;
+    universe.tick(adjustment);
 
     // Clear the viewport with black.
     window.clear(sf::Color(31, 31, 31, 255));
-    window.draw(sprite);
+    window.draw(universe);
 
     window.display();
   }

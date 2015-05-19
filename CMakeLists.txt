@@ -12,7 +12,7 @@ include("cmake/sfml.cmake")
 
 include_directories("src")
 
-file(GLOB_RECURSE "SOURCE_FILES" "src/*.cpp" "src/*.h")
+file(GLOB_RECURSE "SOURCE_FILES" "src/*.cpp" "src/*.h" "src/*.hpp")
 
 add_executable("2.5DMayhem" WIN32 MACOSX_BUNDLE ${SOURCE_FILES})
 target_link_libraries("2.5DMayhem" "sfml-graphics")

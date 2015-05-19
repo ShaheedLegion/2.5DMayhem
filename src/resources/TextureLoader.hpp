@@ -16,6 +16,8 @@
 
 #include <map>
 
+#include "util/Utilities.hpp"
+
 #ifndef _TEXTURE_LOADER_H_
 #define _TEXTURE_LOADER_H_
 
@@ -32,6 +34,12 @@ public:
 
     bool loaded = tex.loadFromFile(name);
 
+    // Apply a shim which only works on Windows so far.
+    if (!loaded) {
+      std::string path;
+      util::GetQualifiedPath(name, &path);
+      loaded = tex.loadFromFile(path);
+    }
     // Make sure we are using high quality (anti-aliased) textures.
     tex.setSmooth(true);
 
