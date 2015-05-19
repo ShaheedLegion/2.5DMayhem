@@ -45,9 +45,13 @@ public:
     }
   }
 
+  const TextureLoader& GetTextureLoader() const { return loader; }
+  const SpriteManager& GetSpriteManager() const { return spriteManager; }
+
 protected:
   TextureLoader loader;
   SpriteManager spriteManager;
+
   sf::Sprite m_sprite;
 };
 } // namespace d2
