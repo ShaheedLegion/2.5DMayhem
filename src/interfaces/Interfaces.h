@@ -20,12 +20,16 @@
 
 namespace d2 {
 
+class Universe;
+
 class Renderable : public sf::Drawable {
 public:
   virtual ~Renderable() {}
 
   // Tick the component with the supplied adjustment to make a smooth 60fps.
   virtual void tick(float adjustment) = 0;
+  virtual void draw(sf::RenderTarget &target,
+                    sf::RenderStates states) const = 0;
 };
 
 class Inputable {
@@ -34,6 +38,12 @@ public:
 
   // Handle input on the component.
   virtual void handleInput(sf::Event &event) = 0;
+};
+
+class StateManager {
+public:
+  virtual Universe *GetUniverse() const = 0;
+  virtual float GetScale() const = 0;
 };
 
 }; // namespace d2

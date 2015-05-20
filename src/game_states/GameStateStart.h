@@ -12,27 +12,33 @@
 // OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 // PERFORMANCE OF THIS SOFTWARE.
 
-#ifndef _UTIL_H_
-#define _UTIL_H_
-#include <Windows.h>
+#ifndef _GAME_STATE_START_H_
+#define _GAME_STATE_START_H_
 
-namespace util {
-static void GetQualifiedPath(const std::string &relativePath,
-                             std::string *fullPath) {
-  HMODULE module = GetModuleHandle(NULL);
-  CHAR buffer[MAX_PATH];
-  DWORD charsCopied = GetModuleFileName(module, buffer, MAX_PATH);
-  if (charsCopied) {
-    // This now contains the full path to the executable.
-    std::string buf(buffer, charsCopied);
+#include "game_states/GameState.h"
+#include <SFML/Graphics/Sprite.hpp>
 
-    size_t idx = buf.find_last_of('\\');
-    buf = buf.substr(0, idx + 1);
-    buf.append(relativePath);
-    *fullPath = buf;
-  }
-}
+namespace d2 {
 
-} // namespace util
+class GameStateStart : public GameState {
+public:
+  GameStateStart(StateManager *manager);
+  ~GameStateStart();
 
-#endif // _UTIL_H_
+  // Override sf::Drawable
+  virtual void draw(sf::RenderTarget &target,
+                    sf::RenderStates states) const override;
+
+  // Override Renderable
+  virtual void tick(float delta) override;
+
+  // Override Inputable
+  virtual void handleInput(sf::Event &evt) override;
+
+protected:
+  sf::Sprite m_sprite;
+};
+
+} // namespace d2
+
+#endif // _GAME_STATE_START_H_

@@ -12,12 +12,12 @@
 // OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 // PERFORMANCE OF THIS SOFTWARE.
 
+#ifndef _SPRITE_MANAGER_
+#define _SPRITE_MANAGER_
+
 #include <SFML/Graphics/Sprite.hpp>
 
 #include <map>
-
-#ifndef _SPRITE_MANAGER_
-#define _SPRITE_MANAGER_
 
 namespace d2 {
 
@@ -41,6 +41,7 @@ public:
 protected:
   std::map<int, sf::Sprite> m_sprites;
 };
+
 } // namespace d2
 
 #endif // _SPRITE_MANAGER_

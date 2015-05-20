@@ -12,14 +12,14 @@
 // OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 // PERFORMANCE OF THIS SOFTWARE.
 
+#ifndef _TEXTURE_LOADER_H_
+#define _TEXTURE_LOADER_H_
+
 #include <SFML/Graphics/Texture.hpp>
 
 #include <map>
 
 #include "util/Utilities.hpp"
-
-#ifndef _TEXTURE_LOADER_H_
-#define _TEXTURE_LOADER_H_
 
 namespace d2 {
 
@@ -55,6 +55,7 @@ public:
 protected:
   std::map<int, sf::Texture> m_textures;
 };
+
 } // namespace d2
 
 #endif // _TEXTURE_LOADER_H_

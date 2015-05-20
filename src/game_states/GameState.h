@@ -12,27 +12,25 @@
 // OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 // PERFORMANCE OF THIS SOFTWARE.
 
-#ifndef _UTIL_H_
-#define _UTIL_H_
-#include <Windows.h>
+#ifndef _GAME_STATE_H_
+#define _GAME_STATE_H_
 
-namespace util {
-static void GetQualifiedPath(const std::string &relativePath,
-                             std::string *fullPath) {
-  HMODULE module = GetModuleHandle(NULL);
-  CHAR buffer[MAX_PATH];
-  DWORD charsCopied = GetModuleFileName(module, buffer, MAX_PATH);
-  if (charsCopied) {
-    // This now contains the full path to the executable.
-    std::string buf(buffer, charsCopied);
+#include "interfaces/Interfaces.h"
+#include <SFML/Graphics/RenderTarget.hpp>
 
-    size_t idx = buf.find_last_of('\\');
-    buf = buf.substr(0, idx + 1);
-    buf.append(relativePath);
-    *fullPath = buf;
-  }
-}
+namespace d2 {
+class Universe;
 
-} // namespace util
+class GameState : public Renderable, public Inputable {
+public:
+  GameState(StateManager *manager) : m_manager(manager) {}
 
-#endif // _UTIL_H_
+  ~GameState() {}
+
+protected:
+  StateManager *m_manager;
+};
+
+} // namespace d2
+
+#endif // _GAME_STATE_H_
