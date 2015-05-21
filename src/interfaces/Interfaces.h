@@ -43,7 +43,6 @@ public:
 class StateManager {
 public:
   virtual Universe *GetUniverse() const = 0;
-  virtual float GetScale() const = 0;
 };
 
 }; // namespace d2

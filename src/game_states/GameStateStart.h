@@ -16,6 +16,7 @@
 #define _GAME_STATE_START_H_
 
 #include "game_states/GameState.h"
+#include "game/BackgroundScroller.h"
 #include <SFML/Graphics/Sprite.hpp>
 
 namespace d2 {
@@ -36,7 +37,7 @@ public:
   virtual void handleInput(sf::Event &evt) override;
 
 protected:
-  sf::Sprite m_sprite;
+  BackgroundScroller m_bgScroller;
 };
 
 } // namespace d2

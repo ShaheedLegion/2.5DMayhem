@@ -12,24 +12,21 @@
 // OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 // PERFORMANCE OF THIS SOFTWARE.
 
-#ifndef _GAME_STATE_MANAGER_H
-#define _GAME_STATE_MANAGER_H
+#ifndef BACKGROUND_SCROLLER_H_
+#define BACKGROUND_SCROLLER_H_
 
 #include "interfaces/Interfaces.h"
+#include <SFML/Graphics/RenderTarget.hpp>
+#include <SFML/Graphics/Sprite.hpp>
 
 #include <vector>
 
 namespace d2 {
-class Universe;
-class GameState;
 
-class GameStateManager : public StateManager,
-                         public Renderable,
-                         public Inputable {
+class BackgroundScroller : public Renderable {
 public:
-  GameStateManager(Universe *universe);
-
-  ~GameStateManager();
+  BackgroundScroller(Universe *universe);
+  ~BackgroundScroller();
 
   // Override sf::Drawable
   virtual void draw(sf::RenderTarget &target,
@@ -38,18 +35,23 @@ public:
   // Override Renderable
   virtual void tick(float delta) override;
 
-  // Override Inputable
-  virtual void handleInput(sf::Event &evt) override;
+  void AddLayer(const std::string &name);
 
-  // Override StateManager
-  virtual Universe *GetUniverse() const override;
+  float GetSpeed() const { return m_speed; }
+  void SetSpeed(float speed) { m_speed = speed; }
 
 protected:
-  std::vector<GameState *> m_states;
+  struct Layer {
+    float speed;
+    float position;
+    sf::Sprite sprite;
+  };
+  std::vector<Layer> m_layers;
+
   Universe *m_universe;
-  GameState *m_currentState;
+  float m_speed;
 };
 
 } // namespace d2
 
-#endif // _GAME_STATE_MANAGER_H
+#endif // BACKGROUND_SCROLLER_H_

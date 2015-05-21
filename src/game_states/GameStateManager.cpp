@@ -20,7 +20,7 @@
 namespace d2 {
 
 GameStateManager::GameStateManager(Universe *universe)
-    : m_universe(universe), m_currentState(nullptr), m_scale(1.0f) {
+    : m_universe(universe), m_currentState(nullptr) {
   // Create the game states.
   m_states.push_back(new GameStateStart(this));
   m_currentState = m_states[0];
@@ -52,27 +52,12 @@ void GameStateManager::tick(float delta) {
 
 // Override Inputable
 void GameStateManager::handleInput(sf::Event &evt) {
-  // We handle some input events on our own, then pass along the rest of the
-  // events to the individual game states.
+  if (!m_currentState)
+    return;
 
-  if (evt.type == sf::Event::MouseWheelMoved) {
-    if (evt.mouseWheel.delta < 0) {
-      m_scale -= 0.1f;
-      if (m_scale < 0.1f)
-        m_scale = 0.1f;
-    } else {
-      m_scale += 0.1f;
-      if (m_scale > 10.0f)
-        m_scale = 10.0f;
-    }
-
-    if (!m_currentState)
-      return;
-    m_currentState->handleInput(evt);
-  }
+  m_currentState->handleInput(evt);
 }
 
-float GameStateManager::GetScale() const { return m_scale; }
 Universe *GameStateManager::GetUniverse() const { return m_universe; }
 
 } // namespace d2

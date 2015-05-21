@@ -19,7 +19,6 @@
 #include <SFML/Graphics/RenderTarget.hpp>
 
 namespace d2 {
-class Universe;
 
 class GameState : public Renderable, public Inputable {
 public:

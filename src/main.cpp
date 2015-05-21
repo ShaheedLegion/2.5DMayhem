@@ -17,15 +17,20 @@
 
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Window/Event.hpp>
+#include <SFML/OpenGL.hpp>
+#include <SFML/Graphics/View.hpp>
 #include "game/Universe.hpp"
 
 int main() {
   // Seed the random number generator.
   /// std::srand(static_cast<unsigned int>(std::time(nullptr)));
-
+  unsigned int width{800};
+  unsigned int height{600};
+  float scale{1.0f};
   sf::ContextSettings settings{32, 0, 4};
-  sf::RenderWindow window{sf::VideoMode{1600, 900, 32}, "2.5DMayhem",
+  sf::RenderWindow window{sf::VideoMode{width, height, 32}, "2.5DMayhem",
                           sf::Style::Default, settings};
+
   window.setVerticalSyncEnabled(true);
   window.setKeyRepeatEnabled(false);
 
@@ -40,6 +45,29 @@ int main() {
       switch (evt.type) {
       case sf::Event::Closed:
         window.close();
+        break;
+      case sf::Event::Resized:
+        // adjust the viewport when the window is resized
+        glViewport(0, 0, evt.size.width, evt.size.height);
+        break;
+      // We handle some input events on our own, then pass along the rest of the
+      // events to the individual game states.
+
+      case sf::Event::MouseWheelMoved: {
+        if (evt.mouseWheel.delta > 0) {
+          scale -= 0.2f;
+          if (scale < 0.2f)
+            scale = 0.2f;
+        } else {
+          scale += 0.2f;
+          if (scale > 1.0f)
+            scale = 1.0f;
+        }
+        sf::View view(window.getDefaultView());
+        view.zoom(scale);
+        window.setView(view);
+      } break;
+      default:
         break;
       }
 
@@ -58,9 +86,10 @@ int main() {
     universe.tick(adjustment);
 
     // Clear the viewport with black.
-    window.clear(sf::Color(31, 31, 31, 255));
-    window.draw(universe);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    // window.clear(sf::Color(31, 31, 31, 255));
 
+    window.draw(universe);
     window.display();
   }
 

@@ -12,18 +12,17 @@
 // OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 // PERFORMANCE OF THIS SOFTWARE.
 
+#include <SFML/OpenGL.hpp>
 #include "game_states/GameStateStart.h"
 #include "game/Universe.hpp"
 
 namespace d2 {
 
-GameStateStart::GameStateStart(StateManager *manager) : GameState(manager) {
-  // Do something with the sprite.
-  TextureLoader &loader(manager->GetUniverse()->GetTextureLoader());
-  SpriteManager &spriteMan(manager->GetUniverse()->GetSpriteManager());
-  std::pair<bool, int> texId(loader.Load("res\\forest_bg.png"));
-  sf::Texture &texture = loader.Get(texId.second);
-  m_sprite = spriteMan.Get(texId.second, texture);
+GameStateStart::GameStateStart(StateManager *manager)
+    : GameState(manager), m_bgScroller(manager->GetUniverse()) {
+  m_bgScroller.AddLayer("res\\layer-1-sky.png");
+  m_bgScroller.AddLayer("res\\layer-2-mountain.png");
+  m_bgScroller.AddLayer("res\\layer-3-ground.png");
 }
 
 GameStateStart::~GameStateStart() {}
@@ -31,21 +30,21 @@ GameStateStart::~GameStateStart() {}
 // Override sf::Drawable
 void GameStateStart::draw(sf::RenderTarget &target,
                           sf::RenderStates states) const {
-  target.draw(m_sprite);
+
+  m_bgScroller.draw(target, states);
 }
 
 // Override Renderable
-void GameStateStart::tick(float delta) {
-  // do some kind of thing ...
-}
+void GameStateStart::tick(float delta) { m_bgScroller.tick(delta); }
 
 // Override Inputable
 void GameStateStart::handleInput(sf::Event &evt) {
-  float scale = m_manager->GetScale();
-  m_sprite.setScale(sf::Vector2f(scale, scale));
-
-  if (evt.type == sf::Event::MouseMoved) {
-    m_sprite.setPosition(sf::Vector2f(evt.mouseMove.x, evt.mouseMove.y));
+  if (evt.type == sf::Event::KeyPressed) {
+    if (evt.key.code == sf::Keyboard::Left) {
+      m_bgScroller.SetSpeed(m_bgScroller.GetSpeed() - 0.1f);
+    } else if (evt.key.code == sf::Keyboard::Right) {
+      m_bgScroller.SetSpeed(m_bgScroller.GetSpeed() + 0.1f);
+    }
   }
 }
 

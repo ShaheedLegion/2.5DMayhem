@@ -41,9 +41,9 @@ public:
   virtual void handleInput(sf::Event &evt) override {
     m_stateManager.handleInput(evt);
   }
-
   // The texture loader and sprite manager are global objects, and are, in a
-  // sense, handled as if they were singletons. This is thy the universe object
+  // sense, handled as if they were singletons. This is thy the universe
+  // object
   // will be accessible from any class in the game - or it should be.
   TextureLoader &GetTextureLoader() { return loader; }
   SpriteManager &GetSpriteManager() { return spriteManager; }
