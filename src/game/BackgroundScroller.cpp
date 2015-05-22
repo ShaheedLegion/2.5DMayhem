@@ -59,4 +59,11 @@ void BackgroundScroller::AddLayer(const std::string &name) {
   layer.speed = static_cast<float>(idx);
 }
 
+sf::Sprite &BackgroundScroller::GetLayer(int idx) {
+  if (idx >= 0 && idx < m_layers.size())
+    return m_layers[idx].sprite;
+
+  return sf::Sprite();
+}
+
 } // namespace d2

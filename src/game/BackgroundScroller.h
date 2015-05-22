@@ -39,6 +39,7 @@ public:
 
   float GetSpeed() const { return m_speed; }
   void SetSpeed(float speed) { m_speed = speed; }
+  sf::Sprite &GetLayer(int idx);
 
 protected:
   struct Layer {

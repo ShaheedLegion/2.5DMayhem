@@ -25,7 +25,7 @@ namespace d2 {
 
 class Universe : public Renderable, public Inputable {
 public:
-  Universe() : m_stateManager(this) {}
+  Universe(int w, int h) : m_stateManager(this), m_w(w), m_h(h) {}
   ~Universe() {}
 
   // Override sf::Drawable
@@ -41,17 +41,21 @@ public:
   virtual void handleInput(sf::Event &evt) override {
     m_stateManager.handleInput(evt);
   }
+
   // The texture loader and sprite manager are global objects, and are, in a
   // sense, handled as if they were singletons. This is thy the universe
-  // object
-  // will be accessible from any class in the game - or it should be.
+  // object will be accessible from any class in the game - or it should be.
   TextureLoader &GetTextureLoader() { return loader; }
   SpriteManager &GetSpriteManager() { return spriteManager; }
+  int GetW() const { return m_w; }
+  int GetH() const { return m_h; }
 
 protected:
   TextureLoader loader;
   SpriteManager spriteManager;
   GameStateManager m_stateManager;
+  int m_w;
+  int m_h;
 };
 
 } // namespace d2

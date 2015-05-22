@@ -34,7 +34,7 @@ int main() {
   window.setVerticalSyncEnabled(true);
   window.setKeyRepeatEnabled(false);
 
-  d2::Universe universe;
+  d2::Universe universe(width, height);
 
   using Clock = std::chrono::high_resolution_clock;
   auto lastTick = Clock::now();
