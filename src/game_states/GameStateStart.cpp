@@ -20,9 +20,9 @@ namespace d2 {
 
 GameStateStart::GameStateStart(StateManager *manager)
     : GameState(manager), m_bgScroller(manager->GetUniverse()) {
-  m_bgScroller.AddLayer("res\\layer-1-sky.png");
-  m_bgScroller.AddLayer("res\\layer-2-mountain.png");
-  m_bgScroller.AddLayer("res\\layer-3-ground.png");
+  m_bgScroller.AddLayer("res\\level1\\layer-1-sky.png");
+  m_bgScroller.AddLayer("res\\level1\\layer-2-mountain.png");
+  m_bgScroller.AddLayer("res\\level1\\layer-3-forest.png");
 }
 
 GameStateStart::~GameStateStart() {}
@@ -35,7 +35,45 @@ void GameStateStart::draw(sf::RenderTarget &target,
 }
 
 // Override Renderable
-void GameStateStart::tick(float delta) { m_bgScroller.tick(delta); }
+void GameStateStart::tick(float delta) {
+  m_bgScroller.tick(delta);
+#if 0
+sf::Sprite& topMost{m_bgScroller.GetLayer(2)};
+int universeW = m_manager->GetUniverse()->GetW();
+int universeH =  m_manager->GetUniverse()->GetH();
+static int posx = 0;
+static int posy = 0;
+static int w = 64;
+static int h = 64;
+static int speedx = 0;
+static int speedy = 2;
+// "walk" down the sprite in the current space where the "player" is, and check if something was hit.
+
+{
+	// First find the "column" of pixels at the sprites projected x position.
+	int projectedX = posx + speedx;
+	const sf::Texture* texture{topMost.getTexture()};
+	sf::Vector2u size{texture->getSize()};
+
+	// If the player is clearly out of bounds, then we don't update it.
+	if ((posx + w + speedx) > universeW)
+		return;
+	if ((posy + h + speedy) > universeH)
+		return;
+	if ((posx + w + speedx) < 0)
+		return;
+	if ((posy + h + speedy) < 0)
+		return;
+
+	// Calculate where the center of the player will be (horiz)
+	int centerx = posx + (w >> 1) + speedx;
+	// Next, get the first non-opaque pixel on the top layer.
+	for (int i = 0; i < size.y; ++i) {
+		texture->
+	}
+}
+#endif // 0
+}
 
 // Override Inputable
 void GameStateStart::handleInput(sf::Event &evt) {

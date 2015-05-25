@@ -45,7 +45,9 @@ protected:
   struct Layer {
     float speed;
     float position;
-    sf::Sprite sprite;
+    sf::Sprite &sprite;
+
+    Layer(sf::Sprite &sprite) : sprite(sprite) {}
   };
   std::vector<Layer> m_layers;
 

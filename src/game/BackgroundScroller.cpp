@@ -50,11 +50,10 @@ void BackgroundScroller::AddLayer(const std::string &name) {
   sf::Texture &texture = loader.Get(texId.second);
   texture.setRepeated(true);
 
-  m_layers.push_back(Layer());
+  m_layers.push_back(Layer(spriteMan.Get(texId.second, texture)));
   int idx = m_layers.size();
 
   Layer &layer{m_layers[idx - 1]};
-  layer.sprite = spriteMan.Get(texId.second, texture);
   layer.position = 0.f;
   layer.speed = static_cast<float>(idx);
 }
