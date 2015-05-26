@@ -23,6 +23,9 @@ GameStateStart::GameStateStart(StateManager *manager)
   m_bgScroller.AddLayer("res\\level1\\layer-1-sky.png");
   m_bgScroller.AddLayer("res\\level1\\layer-2-mountain.png");
   m_bgScroller.AddLayer("res\\level1\\layer-3-forest.png");
+  m_bgScroller.AddMapOverlay("res\\level1\\mapdata.png",
+                             "res\\level1\\tile.png");
+  m_bgScroller.AddActor("res\\level1\\chiraku.png", 4, 1, 25);
 }
 
 GameStateStart::~GameStateStart() {}

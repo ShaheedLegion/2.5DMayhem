@@ -15,18 +15,19 @@
 #ifndef _SPRITE_ACTOR_H_
 #define _SPRITE_ACTOR_H_
 #include <SFML/Graphics/Sprite.hpp>
+#include <SFML/Graphics/Texture.hpp>
 
 namespace d2 {
 
 class SpriteActor {
 public:
-  SpriteActor(const sf::Sprite &sprite)
+  SpriteActor(sf::Sprite &sprite)
       : m_sprite(sprite), m_currentFrame(0), m_horizontalFrames(1),
-        m_verticalFrames(1) {}
+        m_verticalFrames(1), m_millisPerFrame(0) {}
 
-  SpriteActor(const sf::Sprite &sprite, int hframes, int vframes)
+  SpriteActor(sf::Sprite &sprite, int hframes, int vframes, int millisPF)
       : m_sprite(sprite), m_currentFrame(0), m_horizontalFrames(hframes),
-        m_verticalFrames(vframes) {}
+        m_verticalFrames(vframes), m_millisPerFrame(millisPF) {}
 
   ~SpriteActor() {}
 
@@ -36,26 +37,42 @@ public:
   void SetHorizontalFrames(int hframes) { m_horizontalFrames = hframes; }
   void SetVerticalFrames(int vframes) { m_verticalFrames = vframes; }
 
-  sf::Sprite& GetSprite() const { return m_sprite; }
+  sf::Sprite &GetSprite() const { return m_sprite; }
 
-  void UpdateSprite(float delta)
-{
-    sf::Vector2u size(sprite.getTexture()->GetSize());
-	int frameWidth = size.x / m_horizontalFrames;
-	int frameHeight = size.y / m_verticalFrames;
+  void UpdateSprite(float delta) {
+    // Don't update the actor if it's a single frame.
+    if (m_horizontalFrames == 1 && m_verticalFrames == 1)
+      return;
 
-    currentFrame %= imgSheet.GetWidth() / frameWidth; // Makes the animation loop
-    sheet.SetSubRect(IntRect(frameWidth * currentFrame,
-                             frameHeight * animationID,
-                             frameWidth * (currentFrame + 1),
-                             frameHeight * animationID));
-}
+    // the delta is in milliseconds;
+    static float timePassedMillis{0.f};
+    timePassedMillis += delta;
+
+    if (timePassedMillis < static_cast<float>(m_millisPerFrame))
+      return;
+
+    timePassedMillis = 0.f;
+
+    int totalFrames{m_horizontalFrames * m_verticalFrames};
+    m_currentFrame = ++m_currentFrame % totalFrames;
+
+    sf::Vector2u size(m_sprite.getTexture()->getSize());
+    int frameWidth = size.x / m_horizontalFrames;
+    int frameHeight = size.y / m_verticalFrames;
+
+    int frameX = (m_currentFrame % m_horizontalFrames) * frameWidth;
+    int frameY = (m_currentFrame / m_horizontalFrames) * frameHeight;
+
+    m_sprite.setTextureRect(
+        sf::IntRect(frameX, frameY, frameWidth, frameHeight));
+  }
 
 protected:
   sf::Sprite &m_sprite;
   int m_currentFrame;
   int m_horizontalFrames;
   int m_verticalFrames;
+  int m_millisPerFrame;
 };
 
 } // namespace d2

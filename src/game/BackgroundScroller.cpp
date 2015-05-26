@@ -28,6 +28,10 @@ void BackgroundScroller::draw(sf::RenderTarget &target,
   for (const auto &i : m_layers) {
     target.draw(i.sprite);
   }
+
+  for (const auto &i : m_actors) {
+    target.draw(i.GetSprite());
+  }
 }
 
 // Override Renderable
@@ -38,6 +42,10 @@ void BackgroundScroller::tick(float delta) {
 
     i.sprite.setTextureRect(
         sf::IntRect(static_cast<int>(i.position), 0, size.x, size.y));
+  }
+
+  for (auto &i : m_actors) {
+    i.UpdateSprite(delta);
   }
 }
 
@@ -56,6 +64,21 @@ void BackgroundScroller::AddLayer(const std::string &name) {
   Layer &layer{m_layers[idx - 1]};
   layer.position = 0.f;
   layer.speed = static_cast<float>(idx);
+}
+
+void BackgroundScroller::AddMapOverlay(const std::string &mapData,
+                                       const std::string &mapTile) {}
+
+void BackgroundScroller::AddActor(const std::string &sheet, int hFrames,
+                                  int vFrames, int frameDelta) {
+  TextureLoader &loader(m_universe->GetTextureLoader());
+  SpriteManager &spriteMan(m_universe->GetSpriteManager());
+
+  std::pair<bool, int> texId(loader.Load(sheet));
+  sf::Texture &texture = loader.Get(texId.second);
+
+  m_actors.push_back(SpriteActor(spriteMan.Get(texId.second, texture), hFrames,
+                                 vFrames, frameDelta));
 }
 
 sf::Sprite &BackgroundScroller::GetLayer(int idx) {

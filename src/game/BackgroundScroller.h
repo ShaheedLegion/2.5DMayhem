@@ -16,6 +16,7 @@
 #define BACKGROUND_SCROLLER_H_
 
 #include "interfaces/Interfaces.h"
+#include "util/SpriteActor.hpp"
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 
@@ -36,6 +37,9 @@ public:
   virtual void tick(float delta) override;
 
   void AddLayer(const std::string &name);
+  void AddMapOverlay(const std::string &mapData, const std::string &mapTile);
+  void AddActor(const std::string &sheet, int hFrames, int vFrames,
+                int frameDelta);
 
   float GetSpeed() const { return m_speed; }
   void SetSpeed(float speed) { m_speed = speed; }
@@ -50,6 +54,21 @@ protected:
     Layer(sf::Sprite &sprite) : sprite(sprite) {}
   };
   std::vector<Layer> m_layers;
+
+  std::vector<d2::SpriteActor> m_actors;
+
+  struct TileMap {
+    float speed;
+    float position;
+    sf::Sprite &inputMap;
+    sf::Sprite &tile;
+    std::vector<int> inputData;
+
+    TileMap(sf::Sprite &inputMap, sf::Sprite &tile)
+        : inputMap(inputMap), tile(tile), speed(0.f), position(0.f) {}
+  };
+
+  std::vector<TileMap> m_overlays;
 
   Universe *m_universe;
   float m_speed;
