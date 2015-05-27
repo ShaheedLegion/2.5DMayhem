@@ -67,7 +67,30 @@ void BackgroundScroller::AddLayer(const std::string &name) {
 }
 
 void BackgroundScroller::AddMapOverlay(const std::string &mapData,
-                                       const std::string &mapTile) {}
+                                       const std::string &mapTile) {
+  TextureLoader &loader(m_universe->GetTextureLoader());
+  SpriteManager &spriteMan(m_universe->GetSpriteManager());
+
+  std::pair<bool, int> mapTexId{loader.Load(mapData)};
+  sf::Texture &mapTex = loader.Get(mapTexId.second);
+
+  std::pair<bool, int> tileTexId{loader.Load(mapTile)};
+  sf::Texture &tileTex = loader.Get(tileTexId.second);
+
+  m_overlays.push_back(TileMap(spriteMan.Get(mapTexId.second, mapTex),
+                               spriteMan.Get(tileTexId.second, tileTex)));
+
+  TileMap &tileMap{m_overlays[m_overlays.size() - 1]};
+  // Now that we have the sprites, we need to populate the map data vector in
+  // the TileMap struct.
+  sf::Vector2u size{mapTex.getSize()};
+  sf::Image img{mapTex.copyToImage()};
+  const int *pixels{reinterpret_cast<const int *>(img.getPixelsPtr())};
+  unsigned int len{size.x * size.y};
+
+  while (--len > 0)
+    tileMap.inputData.push_back(*pixels++);
+}
 
 void BackgroundScroller::AddActor(const std::string &sheet, int hFrames,
                                   int vFrames, int frameDelta) {
