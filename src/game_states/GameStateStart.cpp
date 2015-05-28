@@ -19,13 +19,22 @@
 namespace d2 {
 
 GameStateStart::GameStateStart(StateManager *manager)
-    : GameState(manager), m_bgScroller(manager->GetUniverse()) {
+    : GameState(manager), m_bgScroller(manager->GetUniverse(), m_transform) {
   m_bgScroller.AddLayer("res\\level1\\layer-1-sky.png");
   m_bgScroller.AddLayer("res\\level1\\layer-2-mountain.png");
   m_bgScroller.AddLayer("res\\level1\\layer-3-forest.png");
-  m_bgScroller.AddMapOverlay("res\\level1\\level.png",
-                             "res\\level1\\tile.png");
+  m_bgScroller.AddMapOverlay("res\\level1\\level.png", "res\\level1\\tile.png");
   m_bgScroller.AddActor("res\\level1\\chiraku.png", 4, 1, 15);
+
+  m_transform.SetX(0);
+  m_transform.SetY(0);
+  m_transform.SetZ(0);
+  m_transform.SetDX(0);
+  m_transform.SetDXLimits(-5, 5);
+  m_transform.SetDY(0);
+  m_transform.SetDYLimits(0, 0);
+  m_transform.SetDZ(0);
+  m_transform.SetDZLimits(0, 0);
 }
 
 GameStateStart::~GameStateStart() {}
@@ -40,51 +49,17 @@ void GameStateStart::draw(sf::RenderTarget &target,
 // Override Renderable
 void GameStateStart::tick(float delta) {
   m_bgScroller.tick(delta);
-#if 0
-sf::Sprite& topMost{m_bgScroller.GetLayer(2)};
-int universeW = m_manager->GetUniverse()->GetW();
-int universeH =  m_manager->GetUniverse()->GetH();
-static int posx = 0;
-static int posy = 0;
-static int w = 64;
-static int h = 64;
-static int speedx = 0;
-static int speedy = 2;
-// "walk" down the sprite in the current space where the "player" is, and check if something was hit.
-
-{
-	// First find the "column" of pixels at the sprites projected x position.
-	int projectedX = posx + speedx;
-	const sf::Texture* texture{topMost.getTexture()};
-	sf::Vector2u size{texture->getSize()};
-
-	// If the player is clearly out of bounds, then we don't update it.
-	if ((posx + w + speedx) > universeW)
-		return;
-	if ((posy + h + speedy) > universeH)
-		return;
-	if ((posx + w + speedx) < 0)
-		return;
-	if ((posy + h + speedy) < 0)
-		return;
-
-	// Calculate where the center of the player will be (horiz)
-	int centerx = posx + (w >> 1) + speedx;
-	// Next, get the first non-opaque pixel on the top layer.
-	for (int i = 0; i < size.y; ++i) {
-		texture->
-	}
-}
-#endif // 0
 }
 
 // Override Inputable
+// Each state handles its own "transformations", which deal with
+// rotating/translating the current view according to the user input.
 void GameStateStart::handleInput(sf::Event &evt) {
   if (evt.type == sf::Event::KeyPressed) {
     if (evt.key.code == sf::Keyboard::Left) {
-      m_bgScroller.SetSpeed(m_bgScroller.GetSpeed() - 0.1f);
+      m_transform.SetDX(m_transform.GetDX() - 1);
     } else if (evt.key.code == sf::Keyboard::Right) {
-      m_bgScroller.SetSpeed(m_bgScroller.GetSpeed() + 0.1f);
+      m_transform.SetDX(m_transform.GetDX() + 1);
     }
   }
 }

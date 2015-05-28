@@ -16,6 +16,7 @@
 #define _GAME_STATE_H_
 
 #include "interfaces/Interfaces.h"
+#include "util/Transform.hpp"
 #include <SFML/Graphics/RenderTarget.hpp>
 
 namespace d2 {
@@ -28,6 +29,7 @@ public:
 
 protected:
   StateManager *m_manager;
+  util::Transform m_transform;
 };
 
 } // namespace d2

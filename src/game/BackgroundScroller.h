@@ -17,6 +17,7 @@
 
 #include "interfaces/Interfaces.h"
 #include "util/SpriteActor.hpp"
+#include "util/Transform.hpp"
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 
@@ -26,7 +27,7 @@ namespace d2 {
 
 class BackgroundScroller : public Renderable {
 public:
-  BackgroundScroller(Universe *universe);
+  BackgroundScroller(Universe *universe, util::Transform &transform);
   ~BackgroundScroller();
 
   // Override sf::Drawable
@@ -41,14 +42,12 @@ public:
   void AddActor(const std::string &sheet, int hFrames, int vFrames,
                 int frameDelta);
 
-  float GetSpeed() const { return m_speed; }
-  void SetSpeed(float speed) { m_speed = speed; }
   sf::Sprite &GetLayer(int idx);
 
 protected:
   struct Layer {
-    float speed;
-    float position;
+    int speed;
+    int position;
     sf::Sprite &sprite;
 
     Layer(sf::Sprite &sprite) : sprite(sprite) {}
@@ -58,8 +57,8 @@ protected:
   std::vector<d2::SpriteActor> m_actors;
 
   struct TileMap {
-    float speed;
-    float position;
+    int speed;
+    int position;
     sf::Sprite &inputMap;
     sf::Sprite &tile;
     std::vector<int> inputData;
@@ -71,7 +70,7 @@ protected:
   std::vector<TileMap> m_overlays;
 
   Universe *m_universe;
-  float m_speed;
+  util::Transform &m_transform;
 };
 
 } // namespace d2

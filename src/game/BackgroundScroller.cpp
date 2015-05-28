@@ -17,8 +17,9 @@
 
 namespace d2 {
 
-BackgroundScroller::BackgroundScroller(Universe *universe)
-    : m_universe(universe), m_speed(0.f) {}
+BackgroundScroller::BackgroundScroller(Universe *universe,
+                                       util::Transform &transform)
+    : m_universe(universe), m_transform(transform) {}
 
 BackgroundScroller::~BackgroundScroller() {}
 
@@ -36,12 +37,20 @@ void BackgroundScroller::draw(sf::RenderTarget &target,
 
 // Override Renderable
 void BackgroundScroller::tick(float delta) {
+  // Use the transformable to get the speed/position attributes.
+  m_transform.Update();
+
   for (auto &i : m_layers) {
-    i.position += (i.speed * m_speed);
+    i.position = m_transform.GetPositionOffsetX(i.position, i.speed);
     sf::Vector2u size(i.sprite.getTexture()->getSize());
 
-    i.sprite.setTextureRect(
-        sf::IntRect(static_cast<int>(i.position), 0, size.x, size.y));
+    i.sprite.setTextureRect(sf::IntRect(i.position, 0, size.x, size.y));
+  }
+
+  // For all the right reasons, there should only be on overlay. And the sprites
+  // should be on top ov it.
+  for (auto &i : m_overlays) {
+    i.position = m_transform.GetPositionOffsetX(i.position, i.speed);
   }
 
   for (auto &i : m_actors) {
@@ -62,8 +71,8 @@ void BackgroundScroller::AddLayer(const std::string &name) {
   int idx = m_layers.size();
 
   Layer &layer{m_layers[idx - 1]};
-  layer.position = 0.f;
-  layer.speed = static_cast<float>(idx);
+  layer.position = 0;
+  layer.speed = idx;
 }
 
 void BackgroundScroller::AddMapOverlay(const std::string &mapData,
