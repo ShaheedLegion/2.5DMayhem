@@ -32,6 +32,12 @@ public:
     int highest = m_textures.size();
     sf::Texture &tex = m_textures[highest];
 
+    if (name.empty() || name.compare("null") == 0) {
+      // Make sure we are using high quality (anti-aliased) textures.
+      tex.setSmooth(true);
+      return std::pair<bool, int>(true, highest);
+    }
+
     bool loaded = tex.loadFromFile(name);
 
     // Apply a shim which only works on Windows so far.

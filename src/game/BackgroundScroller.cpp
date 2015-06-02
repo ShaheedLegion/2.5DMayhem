@@ -33,6 +33,10 @@ void BackgroundScroller::draw(sf::RenderTarget &target,
   for (const auto &i : m_actors) {
     target.draw(i.GetSprite());
   }
+
+  for (const auto &i : m_overlays) {
+    target.draw(i.overlay);
+  }
 }
 
 // Override Renderable
@@ -42,8 +46,8 @@ void BackgroundScroller::tick(float delta) {
 
   for (auto &i : m_layers) {
     i.position = m_transform.GetPositionOffsetX(i.position, i.speed);
-    sf::Vector2u size(i.sprite.getTexture()->getSize());
 
+    sf::Vector2u size(i.sprite.getTexture()->getSize());
     i.sprite.setTextureRect(sf::IntRect(i.position, 0, size.x, size.y));
   }
 
@@ -51,6 +55,9 @@ void BackgroundScroller::tick(float delta) {
   // should be on top ov it.
   for (auto &i : m_overlays) {
     i.position = m_transform.GetPositionOffsetX(i.position, i.speed);
+
+    sf::Vector2u size(m_universe->GetW(), m_universe->GetH());
+    i.overlay.setTextureRect(sf::IntRect(i.position, 0, size.x, size.y));
   }
 
   for (auto &i : m_actors) {
@@ -86,19 +93,46 @@ void BackgroundScroller::AddMapOverlay(const std::string &mapData,
   std::pair<bool, int> tileTexId{loader.Load(mapTile)};
   sf::Texture &tileTex = loader.Get(tileTexId.second);
 
+  // Get an empty texture to use for this sprite.
+  std::pair<bool, int> overlayTexId(loader.Load("null"));
+  sf::Texture &overlayTex = loader.Get(overlayTexId.second);
+
   m_overlays.push_back(TileMap(spriteMan.Get(mapTexId.second, mapTex),
-                               spriteMan.Get(tileTexId.second, tileTex)));
+                               spriteMan.Get(tileTexId.second, tileTex),
+                               spriteMan.Get(overlayTexId.second, overlayTex)));
 
   TileMap &tileMap{m_overlays[m_overlays.size() - 1]};
+  tileMap.speed = m_overlays.size() + 3;
+
   // Now that we have the sprites, we need to populate the map data vector in
   // the TileMap struct.
   sf::Vector2u size{mapTex.getSize()};
+  tileMap.width = size.x;
+  tileMap.height = size.y;
   sf::Image img{mapTex.copyToImage()};
   const int *pixels{reinterpret_cast<const int *>(img.getPixelsPtr())};
   unsigned int len{size.x * size.y};
 
   while (--len > 0)
     tileMap.inputData.push_back(*pixels++);
+
+  sf::Image overlayImg;
+  sf::Image tileImg{tileTex.copyToImage()};
+  overlayImg.create(tileTex.getSize().x * tileMap.width,
+             tileTex.getSize().y * tileMap.height, sf::Color(0, 0, 0, 0));
+  for (int y = 0; y < tileMap.height; ++y) {
+    for (int x = 0; x < tileMap.width; ++x) {
+      int index = y * tileMap.width + x;
+      if (pixels[index] >> 24 != 0) {
+        // Map the input tile locations
+        int xLocation = x * tileTex.getSize().x;
+        int yLocation = y * tileTex.getSize().y;
+        overlayImg.copy(tileImg, xLocation, yLocation);
+      }
+    }
+  }
+
+  overlayTex.loadFromImage(overlayImg);
 }
 
 void BackgroundScroller::AddActor(const std::string &sheet, int hFrames,
@@ -119,5 +153,9 @@ sf::Sprite &BackgroundScroller::GetLayer(int idx) {
 
   return sf::Sprite();
 }
+
+// Called once all the resources have been added to place the actors in the
+// correct positions on the stage.
+void BackgroundScroller::SetupStage() {}
 
 } // namespace d2

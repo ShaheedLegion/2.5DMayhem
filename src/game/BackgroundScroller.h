@@ -42,6 +42,10 @@ public:
   void AddActor(const std::string &sheet, int hFrames, int vFrames,
                 int frameDelta);
 
+  // Called once all the resources have been added to place the actors in the
+  // correct positions on the stage.
+  void SetupStage();
+
   sf::Sprite &GetLayer(int idx);
 
 protected:
@@ -61,10 +65,14 @@ protected:
     int position;
     sf::Sprite &inputMap;
     sf::Sprite &tile;
+    sf::Sprite &overlay;
     std::vector<int> inputData;
+    int width;
+    int height;
 
-    TileMap(sf::Sprite &inputMap, sf::Sprite &tile)
-        : inputMap(inputMap), tile(tile), speed(0.f), position(0.f) {}
+    TileMap(sf::Sprite &inputMap, sf::Sprite &tile, sf::Sprite &overlay)
+        : inputMap(inputMap), tile(tile), overlay(overlay), speed(0.f),
+          position(0.f) {}
   };
 
   std::vector<TileMap> m_overlays;
