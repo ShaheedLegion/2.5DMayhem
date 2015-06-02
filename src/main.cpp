@@ -36,6 +36,9 @@ int main() {
   window.setKeyRepeatEnabled(false);
 
   d2::Universe universe(width, height);
+  // Immediately tick the universe to allow for character placement and resource
+  // loading.
+  universe.tick(50.1f);
 
   using Clock = std::chrono::high_resolution_clock;
   auto lastTick = Clock::now();

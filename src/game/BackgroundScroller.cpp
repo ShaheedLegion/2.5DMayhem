@@ -113,7 +113,7 @@ void BackgroundScroller::AddMapOverlay(const std::string &mapData,
   const int *pixels{reinterpret_cast<const int *>(img.getPixelsPtr())};
   unsigned int len{size.x * size.y};
 
-  while (--len > 0)
+  while (len-- > 0)
     tileMap.inputData.push_back(*pixels++);
 
   sf::Image overlayImg;
@@ -123,7 +123,7 @@ void BackgroundScroller::AddMapOverlay(const std::string &mapData,
   for (int y = 0; y < tileMap.height; ++y) {
     for (int x = 0; x < tileMap.width; ++x) {
       int index = y * tileMap.width + x;
-      if (pixels[index] >> 24 != 0) {
+      if (tileMap.inputData[index] >> 24 != 0) {
         // Map the input tile locations
         int xLocation = x * tileTex.getSize().x;
         int yLocation = y * tileTex.getSize().y;
@@ -156,6 +156,22 @@ sf::Sprite &BackgroundScroller::GetLayer(int idx) {
 
 // Called once all the resources have been added to place the actors in the
 // correct positions on the stage.
-void BackgroundScroller::SetupStage() {}
+void BackgroundScroller::SetupStage() {
+  // Here we walk through the first column of pixels in the source data to
+  // discover where the first usable tile is. Then we position the character on
+  // that tile.
+  TileMap &tileMap{m_overlays[m_overlays.size() - 1]};
+  sf::Vector2u size{tileMap.tile.getTexture()->getSize()};
+
+  for (int y = 0; y < tileMap.height; ++y) {
+    int index = y * tileMap.width + 0;
+    if (tileMap.inputData[index] >> 24 != 0) {
+      // We have the first non-empty tile in this column
+      int yLocation = y * size.y;
+      m_actors[0].SetLocation(0, yLocation - m_actors[0].GetFrameHeight());
+      return;
+    }
+  }
+}
 
 } // namespace d2

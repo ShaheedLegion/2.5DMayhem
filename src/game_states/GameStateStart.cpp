@@ -35,6 +35,9 @@ GameStateStart::GameStateStart(StateManager *manager)
   m_transform.SetDYLimits(0, 0);
   m_transform.SetDZ(0);
   m_transform.SetDZLimits(0, 0);
+
+  // Load all the resources and set up all the transform data.
+  m_bgScroller.SetupStage();
 }
 
 GameStateStart::~GameStateStart() {}

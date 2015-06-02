@@ -23,11 +23,15 @@ class SpriteActor {
 public:
   SpriteActor(sf::Sprite &sprite)
       : m_sprite(sprite), m_currentFrame(0), m_horizontalFrames(1),
-        m_verticalFrames(1), m_millisPerFrame(0) {}
+        m_verticalFrames(1), m_millisPerFrame(0) {
+    UpdateSprite();
+  }
 
   SpriteActor(sf::Sprite &sprite, int hframes, int vframes, int millisPF)
       : m_sprite(sprite), m_currentFrame(0), m_horizontalFrames(hframes),
-        m_verticalFrames(vframes), m_millisPerFrame(millisPF) {}
+        m_verticalFrames(vframes), m_millisPerFrame(millisPF) {
+    UpdateSprite();
+  }
 
   ~SpriteActor() {}
 
@@ -36,6 +40,14 @@ public:
 
   void SetHorizontalFrames(int hframes) { m_horizontalFrames = hframes; }
   void SetVerticalFrames(int vframes) { m_verticalFrames = vframes; }
+
+  int GetFrameWidth() const { return m_frameWidth; }
+  int GetFrameHeight() const { return m_frameHeight; }
+
+  void SetLocation(int x, int y) {
+    m_xLocation = x;
+    m_yLocation = y;
+  }
 
   sf::Sprite &GetSprite() const { return m_sprite; }
 
@@ -56,23 +68,40 @@ public:
     int totalFrames{m_horizontalFrames * m_verticalFrames};
     m_currentFrame = ++m_currentFrame % totalFrames;
 
-    sf::Vector2u size(m_sprite.getTexture()->getSize());
-    int frameWidth = size.x / m_horizontalFrames;
-    int frameHeight = size.y / m_verticalFrames;
-
-    int frameX = (m_currentFrame % m_horizontalFrames) * frameWidth;
-    int frameY = (m_currentFrame / m_horizontalFrames) * frameHeight;
+    int frameX = (m_currentFrame % m_horizontalFrames) * m_frameWidth;
+    int frameY = (m_currentFrame / m_horizontalFrames) * m_frameHeight;
 
     m_sprite.setTextureRect(
-        sf::IntRect(frameX, frameY, frameWidth, frameHeight));
+        sf::IntRect(frameX, frameY, m_frameWidth, m_frameHeight));
+    m_sprite.setPosition(static_cast<float>(m_xLocation),
+                         static_cast<float>(m_yLocation));
   }
 
 protected:
+  void UpdateSprite() {
+    m_currentFrame = 0;
+    m_xLocation = 0;
+    m_yLocation = 0;
+
+    sf::Vector2u size(m_sprite.getTexture()->getSize());
+    if (m_horizontalFrames == 1 && m_verticalFrames == 1) {
+      m_frameWidth = size.x;
+      m_frameHeight = size.y;
+      return;
+    }
+    m_frameWidth = size.x / m_horizontalFrames;
+    m_frameHeight = size.y / m_verticalFrames;
+  }
+
   sf::Sprite &m_sprite;
   int m_currentFrame;
   int m_horizontalFrames;
   int m_verticalFrames;
   int m_millisPerFrame;
+  int m_frameWidth;
+  int m_frameHeight;
+  int m_xLocation;
+  int m_yLocation;
 };
 
 } // namespace d2
