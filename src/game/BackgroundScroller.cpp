@@ -61,7 +61,11 @@ void BackgroundScroller::tick(float delta) {
   }
 
   for (auto &i : m_actors) {
-    i.UpdateSprite(delta);
+    int positionX = m_transform.GetPositionOffsetX(i.GetX(), i.speed);
+    int positionY = m_transform.GetPositionOffsetY(i.GetY(), i.speed);
+    // Apply "gravity" to the actor here ... and take care of collision
+    // handling.
+    i.UpdateSprite(delta, positionX, positionY);
   }
 }
 
