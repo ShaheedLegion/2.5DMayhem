@@ -50,8 +50,14 @@ public:
   }
 
   sf::Sprite &GetSprite() const { return m_sprite; }
+  int GetX() const { return m_xLocation; }
+  int GetY() const { return m_yLocation; }
+  int GetSpeed() const  { return 1; }
 
-  void UpdateSprite(float delta) {
+  void UpdateSprite(float delta, int posX, int posY) {
+    // Set the position of the actor - even for single frame entities.
+    SetLocation(posX, posY);
+
     // Don't update the actor if it's a single frame.
     if (m_horizontalFrames == 1 && m_verticalFrames == 1)
       return;
